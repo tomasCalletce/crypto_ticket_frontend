@@ -12,7 +12,7 @@ function IpfsApi() {
     for await (let result of ipfs.add(eventInformation)) {
       results.push(result);
     }
-    console.log(results[0].cid.string); // hash;
+    console.log(results[0].cid.string); // hash value
     setIpfsHash(results[0].cid.string);
     const fileContents = await toBuffer(ipfs.cat(ipfsHash));
     console.log(fileContents);
@@ -20,6 +20,10 @@ function IpfsApi() {
 
   const fileSelector = (eventInformation) => {
     run(eventInformation);
+  };
+
+  return {
+    fileSelector,
   };
 }
 
