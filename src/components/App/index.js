@@ -9,17 +9,21 @@ import Footer from '../../shared/Footer';
 import Home from '../Home';
 import Maker from "../Maker"
 import About from '../About ';
+import Event from '../Event';
 
 function App() {
+
+  
   return (
     <Box w="100%" minHeight="100vh" >
 
       <Header/>
       <BrowserRouter>
              <Routes>
-              <Route path="/" element={<Home/>}/>
-              <Route path="/maker/" element={<Maker/>}/>
-              <Route path="/about" element={<About/>}/>
+                <Route path="/" element={<Home/>}/>
+                <Route path={'/event/:id'} element={<Event />}/>
+                <Route path="/about" element={<About/>}/>
+                <Route path="/maker" element={<Maker/>}/>
             </Routes>
       </BrowserRouter>
       <Footer/>
