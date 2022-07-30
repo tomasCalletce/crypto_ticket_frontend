@@ -5,8 +5,12 @@ import { Box } from '@chakra-ui/react'
 
 function Maker() {
  return (
-    <Box width="80%" bg="white" marginBottom="1rem" paddingBottom="1rem" bg="lightpink"  >
-       sss
+    <Box width="100%" bg="white" marginBottom="1rem" paddingBottom="1rem" display="flex" justifyContent="center"  >
+       <Box bg="lightcoral" width="80%">
+        <Box>
+            
+        </Box>
+       </Box>
     </Box>
    )
 }
