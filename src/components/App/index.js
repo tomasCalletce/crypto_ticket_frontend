@@ -12,7 +12,7 @@ import About from '../About ';
 
 function App() {
   return (
-    <Box w="100%" minHeight="100vh" display="flex" flexDirection="column" justifyContent="center">
+    <Box w="100%" minHeight="100vh" >
 
       <Header/>
       <BrowserRouter>
