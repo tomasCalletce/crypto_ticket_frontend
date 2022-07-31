@@ -16,6 +16,7 @@ const getAllCompany = async () => {
 
 const createCompany = async (address, name, eventHash) => {
   let company = {
+    id: null,
     address,
     name,
     eventHash,

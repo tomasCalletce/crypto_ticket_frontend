@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import { ContractFactory } from 'ethers';
+import './Maker.css';
 
 import { Box, Button, Heading, Input, Text } from '@chakra-ui/react';
 
-import { addToIpsf } from '../../../middleware/IpfsApi';
+import { addToIpsf, getIpsf } from '../../../middleware/IpfsApi';
 import { createCompany } from '../../../middleware/restApi';
 
 // contract
@@ -12,7 +13,21 @@ import byteCode from '../../../crytoTicketsBitCode.json';
 
 function Maker({ signer, wallet }) {
   const [eventHash, setEventHash] = useState('');
+  const [eventInformation, setEventInformation] = useState({
+    location: '',
+    city: '',
+    date: '',
+    categoria: '',
+    adadMinima: '',
+    responsable: '',
+    nit: '',
+    aperturaDePuertas: '',
+    maxCapta: '',
+    imageBase64: '',
+  });
   const [addressContract, setAddressContract] = useState('');
+  const [imageBase64, setImageBase64] = useState('');
+  const [imageRender, setImageRender] = useState('');
   // const [companyInfo, setCompanyInfor] = useState({});
   const location = useRef();
   const city = useRef();
@@ -27,7 +42,7 @@ function Maker({ signer, wallet }) {
   // const nftSymbol = useRef();
 
   const clickHandler = async () => {
-    const eventInformation = {
+    setEventInformation({
       location: location.current.value,
       city: city.current.value,
       date: date.current.value,
@@ -37,11 +52,10 @@ function Maker({ signer, wallet }) {
       nit: nit.current.value,
       aperturaDePuertas: aperturaDePuertas.current.value,
       maxCapta: maxCapta.current.value,
-    };
-
+    });
     await makeContract();
     await addToIpsf(eventInformation, setEventHash);
-    await createCompany(addressContract, eventHash, responsable.current.value);
+    await createCompany(addressContract, responsable.current.value, eventHash);
   };
 
   const makeContract = async () => {
@@ -49,6 +63,20 @@ function Maker({ signer, wallet }) {
     const res = await factory.connect(signer).deploy(wallet, maxCapta);
 
     setAddressContract(res.address);
+  };
+
+  const onImageChange = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      let reader = new FileReader();
+      reader.onload = (imageBase64) => {
+        setImageBase64(imageBase64.target.result);
+        setEventInformation({
+          imageBase64: imageBase64.target.result,
+        });
+        console.log(eventInformation);
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
   };
 
   return (
@@ -75,6 +103,14 @@ function Maker({ signer, wallet }) {
             <Input ref={nit} />
             <Text>Apertura puertas: </Text>
             <Input ref={aperturaDePuertas} />
+            <div className='container'>
+              <div className='photo'>
+                <img src={!imageBase64 ? 'src/asserts/images/magicBox.png' : imageBase64} alt='magic box' />
+              </div>
+              <span className='hiddenFileInput'>
+                <input onChange={onImageChange} type='file' name='cambiar foto de perfil' accept='image/x-png,image/gif,image/jpeg' />
+              </span>
+            </div>
           </Box>
         </Box>
 

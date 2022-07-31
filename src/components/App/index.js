@@ -11,6 +11,7 @@ import Home from '../Home';
 import Maker from '../Home/Maker';
 import About from '../About ';
 import Event from '../Event';
+import { getIpsf } from '../../middleware/IpfsApi';
 
 function App() {
   const [wallet, setWallet] = useState();
@@ -41,6 +42,8 @@ function App() {
       setWalletConnected(true);
     }
   };
+
+  // getIpsf('QmNnydkaY6jzonCunSYM1yBW8akPe31MwJCbMrd2ZdPQfC');
 
   return (
     <Box w='100%' minHeight='100vh'>
