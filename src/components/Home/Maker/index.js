@@ -3,14 +3,17 @@ import { ContractFactory } from 'ethers';
 
 import { Box, Button, Heading, Input, Text } from '@chakra-ui/react';
 
-import { addToIpsf } from '../../middleware/IpfsApi';
+import { addToIpsf } from '../../../middleware/IpfsApi';
+import { createCompany } from '../../../middleware/restApi';
 
-// contract 
-import abi from "../../crytoTicketsABI.json"
-import byteCode from "../../crytoTicketsBitCode.json"
+// contract
+import abi from '../../../crytoTicketsABI.json';
+import byteCode from '../../../crytoTicketsBitCode.json';
 
-function Maker({ signer,wallet }) {
+function Maker({ signer, wallet }) {
   const [eventHash, setEventHash] = useState('');
+  const [addressContract, setAddressContract] = useState('');
+  // const [companyInfo, setCompanyInfor] = useState({});
   const location = useRef();
   const city = useRef();
   const date = useRef();
@@ -20,8 +23,8 @@ function Maker({ signer,wallet }) {
   const nit = useRef();
   const aperturaDePuertas = useRef();
   const maxCapta = useRef();
-  const nftName = useRef();
-  const nftSymbol = useRef();
+  // const nftName = useRef();
+  // const nftSymbol = useRef();
 
   const clickHandler = async () => {
     const eventInformation = {
@@ -34,18 +37,19 @@ function Maker({ signer,wallet }) {
       nit: nit.current.value,
       aperturaDePuertas: aperturaDePuertas.current.value,
       maxCapta: maxCapta.current.value,
-      nftName: nftName.current.value,
-      nftSymbol: nftSymbol.current.value,
     };
-    makeContract()
+
+    await makeContract();
+    await addToIpsf(eventInformation, setEventHash);
+    await createCompany(addressContract, eventHash, responsable.current.value);
   };
 
   const makeContract = async () => {
-        const factory = new ContractFactory(abi,byteCode);
-        console.log(factory)
-        // const res = await factory.connect(signer).deploy(wallet,maxCapta)
-        // console.log(res)
-  }
+    const factory = new ContractFactory(abi, byteCode);
+    const res = await factory.connect(signer).deploy(wallet, maxCapta);
+
+    setAddressContract(res.address);
+  };
 
   return (
     <Box width='100%' bg='white' marginBottom='1rem' paddingBottom='1rem'>
@@ -78,10 +82,10 @@ function Maker({ signer,wallet }) {
           <Box marginTop='1rem' marginBottom='1rem'>
             <Text>maximum capacity: </Text>
             <Input placeholder='tomas' ref={maxCapta} />
-            <Text>nft name: </Text>
+            {/* <Text>nft name: </Text>
             <Input placeholder='tomas' ref={nftName} />
             <Text>nft symbol: </Text>
-            <Input placeholder='tomas' ref={nftSymbol} />
+            <Input placeholder='tomas' ref={nftSymbol} /> */}
           </Box>
           <Button onClick={clickHandler}>create NFT</Button>
         </Box>
