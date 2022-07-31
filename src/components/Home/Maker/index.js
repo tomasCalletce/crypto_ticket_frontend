@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef, useState,useEffect } from 'react';
 import { ContractFactory } from 'ethers';
 import './Maker.css';
 
-import { Box, Button, Heading, Input, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Input, Text, Image } from '@chakra-ui/react';
 
 import { addToIpsf } from '../../../middleware/IpfsApi';
 import { createCompany } from '../../../middleware/restApi';
@@ -28,6 +28,8 @@ function Maker({ signer, wallet }) {
   const [addressContract, setAddressContract] = useState('');
   const [imageBase64, setImageBase64] = useState('');
   const [imageRender, setImageRender] = useState('');
+  const [imageLoaded, setImageLoaded] = useState();
+
   const location = useRef();
   const artist = useRef();
   const city = useRef();
@@ -38,10 +40,12 @@ function Maker({ signer, wallet }) {
   const nit = useRef();
   const aperturaDePuertas = useRef();
   const maxCapta = useRef();
-  // const nftName = useRef();
-  // const nftSymbol = useRef();
+
+  useEffect(() => {
+  }, []);
 
   const clickHandler = async () => {
+    if(!imageLoaded) return;
     setEventInformation({
       adadMinima: adadMinima.current.value,
       artist: artist.current.value,
@@ -54,23 +58,26 @@ function Maker({ signer, wallet }) {
       nit: nit.current.value,
       responsable: responsable.current.value,
     });
+
     await makeContract();
     await addToIpsf(eventInformation, setEventHash);
     await createCompany(addressContract, responsable.current.value, eventHash);
+    console.log("done")
   };
 
   const makeContract = async () => {
     const factory = new ContractFactory(abi, byteCode);
     const res = await factory.connect(signer).deploy(wallet, maxCapta);
-
     setAddressContract(res.address);
   };
 
-  const onImageChange = (event) => {
+  const onImageChange = async (event) => {
+    setImageLoaded(false)
     if (event.target.files && event.target.files[0]) {
       let reader = new FileReader();
       reader.onload = (imageBase64) => {
         setImageBase64(imageBase64.target.result);
+        setImageLoaded(true)
       };
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -78,12 +85,11 @@ function Maker({ signer, wallet }) {
 
   return (
     <Box width='100%' bg='white' marginBottom='1rem' paddingBottom='1rem'>
-      <Heading color='#003865' paddingLeft='1rem'>
-        Create event nft
-      </Heading>
+     
       <Box display='flex' justifyContent='center'>
-        <Box width='50%' bg='#f8fafc' padding='1rem'>
+        <Box width='50%' bg='#f8fafc' padding='1rem' margin="3rem" border="1px" borderColor="gray.200" boxShadow='sm' rounded='md'>
           <Box marginTop='1rem' marginBottom='1rem'>
+            <Heading color='#003865' >Create event nft</Heading>
             <Text>Artista:</Text>
             <Input placeholder='' ref={artist} />
             <Text>Location: </Text>
@@ -102,27 +108,20 @@ function Maker({ signer, wallet }) {
             <Input ref={nit} />
             <Text>Apertura puertas: </Text>
             <Input ref={aperturaDePuertas} />
-            <div className='container'>
-              <div className='photo'>
-                <img src={!imageBase64 ? 'src/asserts/images/magicBox.png' : imageBase64} alt='magic box' />
-              </div>
-              <span className='hiddenFileInput'>
-                <input onChange={onImageChange} type='file' name='cambiar foto de perfil' accept='image/x-png,image/gif,image/jpeg' />
-              </span>
-            </div>
-          </Box>
-        </Box>
-
-        <Box width='50%' bg='#f8fafc' padding='1rem'>
-          <Box marginTop='1rem' marginBottom='1rem'>
             <Text>maximum capacity: </Text>
             <Input placeholder='tomas' ref={maxCapta} />
-            {/* <Text>nft name: </Text>
-            <Input placeholder='tomas' ref={nftName} />
-            <Text>nft symbol: </Text>
-            <Input placeholder='tomas' ref={nftSymbol} /> */}
+            <Box>
+              <Box>
+                {!imageBase64 ? null : <Image src={imageBase64} alt='' ></Image>}
+              </Box>
+              <div className='container'>
+                <span className='hiddenFileInput'>
+                  <input onChange={onImageChange} type='file' name='cambiar foto de perfil' accept='image/x-png,image/gif,image/jpeg' />
+                </span>
+             </div>
+            </Box>
+            <Button onClick={clickHandler}>create NFT</Button>
           </Box>
-          <Button onClick={clickHandler}>create NFT</Button>
         </Box>
       </Box>
     </Box>
