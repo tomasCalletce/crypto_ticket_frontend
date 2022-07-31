@@ -1,10 +1,15 @@
 import { useRef, useState } from 'react';
+import { ContractFactory } from 'ethers';
 
 import { Box, Button, Heading, Input, Text } from '@chakra-ui/react';
 
 import { addToIpsf } from '../../middleware/IpfsApi';
 
-function Maker() {
+// contract 
+import abi from "../../crytoTicketsABI.json"
+import byteCode from "../../crytoTicketsBitCode.json"
+
+function Maker({ signer,wallet }) {
   const [eventHash, setEventHash] = useState('');
   const location = useRef();
   const city = useRef();
@@ -32,10 +37,14 @@ function Maker() {
       nftName: nftName.current.value,
       nftSymbol: nftSymbol.current.value,
     };
-
-    await addToIpsf(eventInformation, setEventHash);
-    //await getIpsf(`https://ipfs.infura.io/ipfs/${eventHash}`);
+    makeContract()
   };
+
+  const makeContract = async () => {
+        const factory = new ContractFactory(abi,byteCode);
+        const res = await factory.connect(signer).deploy(wallet,maxCapta)
+        console.log(res)
+  }
 
   return (
     <Box width='100%' bg='white' marginBottom='1rem' paddingBottom='1rem'>
