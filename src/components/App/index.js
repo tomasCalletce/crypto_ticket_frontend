@@ -2,17 +2,22 @@ import {useState} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom"
 import { ethers } from 'ethers';
 
-import { Box } from '@chakra-ui/react'
+
+import { Box } from '@chakra-ui/react';
 
 import Header from '../../shared/Header';
 import Footer from '../../shared/Footer';
 
 import Home from '../Home';
-import Maker from "../Maker"
+import Maker from '../Maker';
 import About from '../About ';
 import Event from '../Event';
 
+import { getCompany, getAllCompany } from '../../middleware/restApi';
+
 function App() {
+  getCompany('1');
+  getAllCompany();
 
   const [wallet,setWallet] = useState()
   const [provider,setProvider] = useState()
@@ -59,10 +64,9 @@ function App() {
                 <Route path="/maker" element={<Maker signer={signer} wallet={wallet} />}/>
             </Routes>
       </BrowserRouter>
-      <Footer/>
-      
+      <Footer />
     </Box>
-    );
+  );
 }
 
 export default App;

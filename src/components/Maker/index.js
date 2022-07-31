@@ -42,8 +42,9 @@ function Maker({ signer,wallet }) {
 
   const makeContract = async () => {
         const factory = new ContractFactory(abi,byteCode);
-        const res = await factory.connect(signer).deploy(wallet,maxCapta)
-        console.log(res)
+        console.log(factory)
+        // const res = await factory.connect(signer).deploy(wallet,maxCapta)
+        // console.log(res)
   }
 
   return (
