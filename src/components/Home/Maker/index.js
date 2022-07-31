@@ -4,7 +4,7 @@ import './Maker.css';
 
 import { Box, Button, Heading, Input, Text } from '@chakra-ui/react';
 
-import { addToIpsf, getIpsf } from '../../../middleware/IpfsApi';
+import { addToIpsf } from '../../../middleware/IpfsApi';
 import { createCompany } from '../../../middleware/restApi';
 
 // contract
@@ -14,22 +14,22 @@ import byteCode from '../../../crytoTicketsBitCode.json';
 function Maker({ signer, wallet }) {
   const [eventHash, setEventHash] = useState('');
   const [eventInformation, setEventInformation] = useState({
-    location: '',
+    adadMinima: '',
+    artist: '',
+    aperturaDePuertas: '',
+    categoria: '',
     city: '',
     date: '',
-    categoria: '',
-    adadMinima: '',
-    responsable: '',
-    nit: '',
-    aperturaDePuertas: '',
+    location: '',
     maxCapta: '',
-    imageBase64: '',
+    nit: '',
+    responsable: '',
   });
   const [addressContract, setAddressContract] = useState('');
   const [imageBase64, setImageBase64] = useState('');
   const [imageRender, setImageRender] = useState('');
-  // const [companyInfo, setCompanyInfor] = useState({});
   const location = useRef();
+  const artist = useRef();
   const city = useRef();
   const date = useRef();
   const categoria = useRef();
@@ -43,15 +43,16 @@ function Maker({ signer, wallet }) {
 
   const clickHandler = async () => {
     setEventInformation({
-      location: location.current.value,
+      adadMinima: adadMinima.current.value,
+      artist: artist.current.value,
+      aperturaDePuertas: aperturaDePuertas.current.value,
+      categoria: categoria.current.value,
       city: city.current.value,
       date: date.current.value,
-      categoria: categoria.current.value,
-      adadMinima: adadMinima.current.value,
-      responsable: responsable.current.value,
-      nit: nit.current.value,
-      aperturaDePuertas: aperturaDePuertas.current.value,
+      location: location.current.value,
       maxCapta: maxCapta.current.value,
+      nit: nit.current.value,
+      responsable: responsable.current.value,
     });
     await makeContract();
     await addToIpsf(eventInformation, setEventHash);
@@ -70,10 +71,6 @@ function Maker({ signer, wallet }) {
       let reader = new FileReader();
       reader.onload = (imageBase64) => {
         setImageBase64(imageBase64.target.result);
-        setEventInformation({
-          imageBase64: imageBase64.target.result,
-        });
-        console.log(eventInformation);
       };
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -87,8 +84,10 @@ function Maker({ signer, wallet }) {
       <Box display='flex' justifyContent='center'>
         <Box width='50%' bg='#f8fafc' padding='1rem'>
           <Box marginTop='1rem' marginBottom='1rem'>
+            <Text>Artista:</Text>
+            <Input placeholder='' ref={artist} />
             <Text>Location: </Text>
-            <Input placeholder='tomas' ref={location} />
+            <Input placeholder='' ref={location} />
             <Text>City: </Text>
             <Input ref={city} />
             <Text>Date: </Text>
