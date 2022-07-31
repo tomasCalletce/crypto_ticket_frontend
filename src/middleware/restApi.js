@@ -3,7 +3,7 @@ import axios from 'axios';
 const url = 'https://cryptotickets.herokuapp.com/companies';
 
 const getCompany = async (address) => {
-  let response = await axios.get(`url/${address}`);
+  let response = await axios.get(`${url}/${address}`);
   let data = await response.data;
   console.log(data);
   return data;

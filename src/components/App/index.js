@@ -11,10 +11,11 @@ import Maker from '../Maker';
 import About from '../About ';
 import Event from '../Event';
 
-import { getCompany } from '../../middleware/restApi';
+import { getCompany, getAllCompany } from '../../middleware/restApi';
 
 function App() {
-  getCompany();
+  getCompany('1');
+  getAllCompany();
 
   return (
     <Box w='100%' minHeight='100vh'>
